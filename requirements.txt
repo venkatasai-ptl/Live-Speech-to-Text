@@ -1,0 +1,5 @@
+whisper             # OpenAI Whisper library for speech-to-text
+torch               # PyTorch, required by Whisper
+torchaudio          # Audio processing for PyTorch
+sounddevice         # For real-time microphone input
+numpy               # For handling audio data
