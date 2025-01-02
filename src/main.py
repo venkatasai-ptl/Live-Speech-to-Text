@@ -12,15 +12,6 @@ def list_input_devices():
     p.terminate()
 
 def capture_audio(model, chunk_size=1024, rate=16000, duration=5, input_device_index=None):
-    """
-    Captures live audio from a microphone and transcribes it in real time.
-    Args:
-        model: The Whisper model for transcription.
-        chunk_size: Audio buffer size.
-        rate: Sampling rate of the microphone.
-        duration: Duration to process in seconds.
-        input_device_index: Index of the microphone device.
-    """
     p = pyaudio.PyAudio()
     stream = p.open(format=pyaudio.paInt16,
                     channels=1,
@@ -31,31 +22,23 @@ def capture_audio(model, chunk_size=1024, rate=16000, duration=5, input_device_i
 
     print("Listening... (Press Ctrl+C to stop)")
     try:
-        while True:  # Continuously listen and transcribe
-            audio_frames = []
+        with open("transcription.txt", "a") as f:  # Open a file to save transcriptions
             for _ in range(0, int(rate / chunk_size * duration)):
                 audio_data = stream.read(chunk_size, exception_on_overflow=False)
-                audio_frames.append(audio_data)
+                audio_array = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
 
-            # Combine audio frames
-            audio_bytes = b''.join(audio_frames)
-            audio_array = np.frombuffer(audio_bytes, dtype=np.int16).astype(np.float32) / 32768.0
-
-            # Whisper transcription logic
-            mel = whisper.log_mel_spectrogram(whisper.pad_or_trim(audio_array)).to(model.device)
-            _, probs = model.detect_language(mel)
-            print(f"Detected language: {max(probs, key=probs.get)}")
-
-            options = whisper.DecodingOptions()
-            result = whisper.decode(model, mel, options)
-            print(f"Transcription: {result.text}")
-
+                # Restrict transcription to English and save to file
+                result = model.transcribe(audio_array, fp16=False, language="en")
+                transcription = result["text"]
+                print("Transcription:", transcription)
+                f.write(transcription + "\n")  # Append to the file
     except KeyboardInterrupt:
         print("\nStopped listening.")
     finally:
         stream.stop_stream()
         stream.close()
         p.terminate()
+
 
 if __name__ == "__main__":
     # Step 1: List input devices
