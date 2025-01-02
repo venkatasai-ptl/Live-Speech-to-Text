@@ -11,7 +11,7 @@ def list_input_devices():
             print(f"Index {i}: {device_info['name']}")
     p.terminate()
 
-def capture_audio(model, chunk_size=1024, rate=16000, duration=5, input_device_index=None):
+def capture_audio(model, chunk_size=2048, rate=16000, duration=10, input_device_index=None):
     p = pyaudio.PyAudio()
     stream = p.open(format=pyaudio.paInt16,
                     channels=1,
