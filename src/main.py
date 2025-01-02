@@ -22,17 +22,23 @@ def capture_audio(model, chunk_size=1024, rate=16000, duration=5, input_device_i
 
     print("Listening... (Press Ctrl+C to stop)")
     try:
-        for _ in range(0, int(rate / chunk_size * duration)):
-            audio_data = stream.read(chunk_size, exception_on_overflow=False)
-            audio_array = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
-            result = model.transcribe(audio_array, fp16=False)
-            print("Transcription:", result["text"])
+        with open("transcription.txt", "a") as f:  # Open a file to save transcriptions
+            for _ in range(0, int(rate / chunk_size * duration)):
+                audio_data = stream.read(chunk_size, exception_on_overflow=False)
+                audio_array = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
+
+                # Restrict transcription to English and save to file
+                result = model.transcribe(audio_array, fp16=False, language="en")
+                transcription = result["text"]
+                print("Transcription:", transcription)
+                f.write(transcription + "\n")  # Append to the file
     except KeyboardInterrupt:
         print("\nStopped listening.")
     finally:
         stream.stop_stream()
         stream.close()
         p.terminate()
+
 
 if __name__ == "__main__":
     # Step 1: List input devices
