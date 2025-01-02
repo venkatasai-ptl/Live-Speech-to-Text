@@ -11,7 +11,7 @@ def list_input_devices():
             print(f"Index {i}: {device_info['name']}")
     p.terminate()
 
-def transcribe_live(model, chunk_size=1024, rate=16000, duration=5, input_device_index=None):
+def capture_audio(model, chunk_size=1024, rate=16000, duration=5, input_device_index=None):
     """
     Captures live audio from a microphone and transcribes it in real time.
     Args:
