@@ -22,7 +22,7 @@ def capture_audio(model, chunk_size=1024, rate=16000, duration=5, input_device_i
 
     print("Listening... (Press Ctrl+C to stop)")
     try:
-        with open("transcription.txt", "a") as f:  # Open a file to save transcriptions
+        with open("transcription.txt", "a", encoding="utf-8") as f:  # Open file in UTF-8 encoding
             for _ in range(0, int(rate / chunk_size * duration)):
                 audio_data = stream.read(chunk_size, exception_on_overflow=False)
                 audio_array = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
