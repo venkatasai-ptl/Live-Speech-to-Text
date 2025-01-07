@@ -3,7 +3,7 @@ import websockets
 import json
 import wave
 import pyaudio
-import base64
+
 
 def list_input_devices():
     p = pyaudio.PyAudio()
@@ -14,11 +14,11 @@ def list_input_devices():
             print(f"Index {i}: {device_info['name']}")
     p.terminate()
 
+
 async def send_audio_to_deepgram(api_key, input_device_index, rate=16000, chunk_size=2048):
     url = "wss://api.deepgram.com/v1/listen"
     headers = {
-        "Authorization": f"Token {api_key}",
-        "Content-Type": "application/json"
+        "Authorization": f"Token {api_key}"
     }
 
     async with websockets.connect(url, extra_headers=headers) as ws:
@@ -62,6 +62,7 @@ async def send_audio_to_deepgram(api_key, input_device_index, rate=16000, chunk_
                         print(f"Error receiving transcription: {e}")
 
         await asyncio.gather(send_audio(), receive_transcription())
+
 
 if __name__ == "__main__":
     # Step 1: List input devices
