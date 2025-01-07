@@ -3,4 +3,8 @@ torch               # PyTorch, required by Whisper
 torchaudio          # Audio processing for PyTorch
 sounddevice         # For real-time microphone input
 numpy               # For handling audio data
+<<<<<<< HEAD
 websockets
+=======
+pyaudio             # For real-time microphone input
+>>>>>>> 3fcc8315137ae76723ab5cfd19a2348b82cf3d1d
